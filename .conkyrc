@@ -1,0 +1,88 @@
+conky.config = {
+        background = false,
+        font = '-*-fixed-*-*-*-*-9-*-*-*-*-*-*-*',
+        xftalpha = 0.8,
+        update_interval = 6.0,
+        total_run_times = 0,
+        own_window = true,
+        own_window_type = 'override',
+        own_window_argb_visual = true,
+        own_window_transparent = true,
+        own_window_hints = 'undecorated,sticky,below,skip_taskbar,skip_pager',
+        double_buffer = true,
+        minimum_width = 220, minimum_height = 5,
+        maximum_width = 300,
+        draw_shades = true,
+        draw_outline = false,
+        draw_borders = false,
+        draw_graph_borders = true,
+        default_color = 'white',
+        default_shade_color = 'black',
+        alignment = 'top_right',
+        gap_x = 20,
+        gap_y = 35,
+        no_buffers = true,
+        cpu_avg_samples = 2,
+        override_utf8_locale = false,
+        uppercase = true,
+
+};
+
+conky.text = [[
+codekitty ($machine)
+$stippled_hr
+
+Kernel: $alignr $kernel
+Uptime: $alignr $uptime
+Battery: $alignr $battery_time ${battery}
+
+
+SYSTEM
+$stippled_hr
+
+CPU1: ${alignr} ${cpu cpu1}%
+CPU2: ${alignr} ${cpu cpu2}%
+${cpugraph 20}
+${exec cat /proc/cpuinfo | grep "model name" | head -n1 | awk '{print $6}'} ${alignr} ${exec cat /proc/cpuinfo | grep "model name" | head -n1 | awk '{print $9}'}
+
+Load: $alignr $loadavg
+Processes: $alignr $processes
+
+RAM: $alignr ${exec /home/sysadmin/.config/conky/xen_memory.sh}%
+${execbar /home/sysadmin/.config/conky/xen_memory.sh}
+${alignr} ${exec xl info | grep total | awk '{print $3}' | cut -c1-2}GiB
+
+Top
+$stippled_hr
+
+CPU $alignr  PID   CPU%   MEM%
+ ${top name 1} $alignr ${top pid 1} ${top cpu 1} ${top mem 1}
+ ${top name 2} $alignr ${top pid 2} ${top cpu 2} ${top mem 2}
+ ${top name 3} $alignr ${top pid 3} ${top cpu 3} ${top mem 3}
+
+Mem
+ ${top_mem name 1} $alignr ${top_mem pid 1} ${top_mem cpu 1} ${top_mem mem 1}
+ ${top_mem name 2} $alignr ${top_mem pid 2} ${top_mem cpu 2} ${top_mem mem 2}
+ ${top_mem name 3} $alignr ${top_mem pid 3} ${top_mem cpu 3} ${top_mem mem 3}
+
+
+Sensors
+$stippled_hr
+
+CPU: ${alignr}${acpitemp}C
+#CPU1: ${alignr}${exec sensors | grep "Core 0" | awk -F+ '{print $2}' | awk -F° '{print $1}'}C
+#CPU2: ${alignr}${exec sensors | grep "Core 1" | awk -F+ '{print $2}' | awk -F° '{print $1}'}
+Fan: ${alignr}${exec sensors|grep -Eo '[0-9]+ RPM'|cut -c1-4}RPM
+
+
+Storage
+$stippled_hr
+
+ROOT: $alignr ${exec sudo lvs | grep -E '^ +pool00' | awk '{print $5}'}GIB / ${exec sudo lvs | grep -E '^ +pool00' | awk '{print $4}'}iB
+${execbar sudo lvs | grep -E '^ +pool00' | awk '{print $5}'}
+
+Write: $alignr $diskio_write
+${diskiograph_write 20}
+Read: $alignr $diskio_read
+${diskiograph_read 20}
+]];
